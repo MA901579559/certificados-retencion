@@ -67,6 +67,32 @@ archivo = st.file_uploader("Sube el auxiliar", type=["xlsx"])
 if archivo:
     st.success("✅ Archivo cargado correctamente")
 
+
+st.subheader("Acciones")
+
+col1, col2, col3 = st.columns(3)
+
+# 🔄 BOTÓN LIMPIAR FILTROS
+with col1:
+    if st.button("🔄 Limpiar filtros"):
+        st.experimental_rerun()
+
+# 📥 EXPORTAR A EXCEL
+with col2:
+    if 'agrupado' in locals():
+        excel = agrupado.to_excel(index=False)
+        st.download_button(
+            "📥 Descargar Excel",
+            data=excel,
+            file_name="resumen_retenciones.xlsx"
+        )
+
+# ⚙️ OPCIONES
+with col3:
+    with st.expander("⚙️ Opciones"):
+        st.write("Ajustes futuros")
+
+
 # ---------------- FUNCIONES ----------------
 
 def periodo_a_mes(periodo):
