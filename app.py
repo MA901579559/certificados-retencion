@@ -1,5 +1,11 @@
 import streamlit as st
 import pandas as pd
+
+st.set_page_config(
+    page_title="Certificados de Retención",
+    page_icon="📄"
+)
+
 import zipfile
 import re
 from datetime import date
@@ -17,7 +23,17 @@ COL_TARIFA = 390
 COL_RET = ANCHO - MARGEN_DER - 5
 
 # ---------------- UI ----------------
-st.title("📄 Generador Certificados de Retención")
+st.markdown(
+    "<h2 style='text-align: center;'>📄 Certificados de Retención</h2>",
+    unsafe_allow_html=True
+)
+
+st.markdown(
+    "<p style='text-align: center;'>Generación automática de certificados tributarios</p>",
+    unsafe_allow_html=True
+)
+
+st.divider()
 
 ANIO = st.number_input("Año gravable", value=2026)
 NOMBRE_EMPRESA = st.text_input("Nombre empresa", value="MASIZO SAS")
