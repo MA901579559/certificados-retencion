@@ -6,9 +6,27 @@ st.set_page_config(
     page_icon="📄"
 )
 
+# ---------- BARRA SUPERIOR ----------
 st.markdown(
     """
     <div style="background-color:#2E86C1;padding:10px;border-radius:5px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div style="color:white;font-weight:bold;font-size:18px;">
+                MASIZO SAS
+            </div>
+            <div style="color:white;">
+                Wilfredo Diaz | Soporte | Preferencia
+            </div>
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+# ---------- BARRA DE ACCIONES ----------
+st.markdown(
+    """
+    <div style="background-color:#2E86C1;padding:8px;border-radius:5px;margin-top:5px;">
         
         <div style="display:flex; justify-content:space-between; align-items:center;">
             
@@ -16,8 +34,8 @@ st.markdown(
                 📄 Certificados
             </div>
 
-            <div>
-                🔄 📥 ⚙️
+            <div style="font-size:18px;">
+                🔄 &nbsp;&nbsp; 📥 &nbsp;&nbsp; ⚙️
             </div>
 
         </div>
@@ -26,7 +44,6 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-
 
 
 import zipfile
