@@ -334,7 +334,8 @@ if archivo:
         return file_name
 
     # ---------------- GENERACIÓN ----------------
-    if st.button("Generar certificados"):
+    
+if st.button("Generar certificados"):
 
     with st.spinner("⏳ Generando certificados..."):
 
@@ -342,7 +343,6 @@ if archivo:
 
         if not errores.empty:
             st.error("🚫 Hay inconsistencias, no se generan certificados.")
-            st.dataframe(errores)
             st.stop()
 
         archivos = []
