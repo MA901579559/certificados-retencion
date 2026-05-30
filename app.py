@@ -350,25 +350,28 @@ if st.button("Generar certificados"):
         for (nit, tercero, tipo), grupo in agrupado.groupby(["Nit","Tercero","TipoRet"]):
             archivos.append(generar_pdf(nit, tercero, grupo, tipo, texto_periodo))
 
-if len(archivos) == 1:
-    with open(archivos[0], "rb") as f:
-        st.download_button(
-            "📄 Descargar PDF",
-            f,
-            file_name=archivos[0],
-            mime="application/pdf"
-        )
-else:
-    zip_name = "certificados.zip"
+        if len(archivos) == 1:
+            with open(archivos[0], "rb") as f:
+                st.download_button(
+                    "📄 Descargar PDF",
+                    f,
+                    file_name=archivos[0],
+                    mime="application/pdf"
+                )
+        else:
+            zip_name = "certificados.zip"
 
-    with zipfile.ZipFile(zip_name, "w") as z:
-        for a in archivos:
-            z.write(a)
+            with zipfile.ZipFile(zip_name, "w") as z:
+                for a in archivos:
+                    z.write(a)
 
-    with open(zip_name, "rb") as f:
-        st.download_button(
-            "📦 Descargar ZIP",
-            f,
-            file_name="certificados.zip",
-            mime="application/zip"
-        )
+            with open(zip_name, "rb") as f:
+                st.download_button(
+                    "📦 Descargar ZIP",
+                    f,
+                    file_name="certificados.zip",
+                    mime="application/zip"
+                )
+
+        # ✅ ESTE VA AQUÍ (dentro del botón)
+        st.success(f"✅ {len(archivos)} certificados generados correctamente")
