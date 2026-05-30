@@ -9,22 +9,6 @@ st.set_page_config(
 st.markdown(
     """
     <div style="background-color:#2E86C1;padding:10px;border-radius:5px;">
-        <div style="display:flex;justify-content:space-between;align-items:center;">
-            <div style="color:white;font-weight:bold;font-size:18px;">
-                MASIZO SAS
-            </div>
-            <div style="color:white;">
-                Wilfredo Diaz | Soporte | Preferencia
-            </div>
-        </div>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-
-st.markdown(
-    """
-    <div style="background-color:#2E86C1;padding:10px;border-radius:5px;">
         
         <div style="display:flex; justify-content:space-between; align-items:center;">
             
@@ -42,6 +26,7 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
 
 
 import zipfile
