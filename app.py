@@ -25,23 +25,24 @@ st.markdown(
 st.markdown(
     """
     <div style="background-color:#2E86C1;padding:10px;border-radius:5px;">
-        <div style="display:flex;justify-content:space-between;align-items:center;">
+        
+        <div style="display:flex; justify-content:space-between; align-items:center;">
             
             <div style="color:white;font-weight:bold;">
                 📄 Certificados
             </div>
 
             <div>
-                <button style="margin-right:10px;padding:6px 10px;">🔄</button>
-                <button style="margin-right:10px;padding:6px 10px;">📥</button>
-                <button style="padding:6px 10px;">⚙️</button>
+                🔄 📥 ⚙️
             </div>
 
         </div>
+
     </div>
     """,
     unsafe_allow_html=True
 )
+
 
 import zipfile
 import re
