@@ -357,7 +357,7 @@ if st.button("Generar certificados"):
 	        else:
             zip_name = "certificados.zip"
 
-	st.success(f"✅ Proceso finalizado: {len(archivos)} certificados generados")
+st.success(f"✅ Proceso finalizado: {len(archivos)} certificados generados")
 
             with zipfile.ZipFile(zip_name, "w") as z:
                 for a in archivos:
