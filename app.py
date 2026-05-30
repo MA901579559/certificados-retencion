@@ -353,8 +353,11 @@ if st.button("Generar certificados"):
         if len(archivos) == 1:
             with open(archivos[0], "rb") as f:
                 st.download_button("📄 Descargar PDF", f, file_name=archivos[0], mime="application/pdf")
-        else:
+	
+	        else:
             zip_name = "certificados.zip"
+
+	st.success(f"✅ Proceso finalizado: {len(archivos)} certificados generados")
 
             with zipfile.ZipFile(zip_name, "w") as z:
                 for a in archivos:
