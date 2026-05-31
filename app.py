@@ -17,11 +17,14 @@ COL_TARIFA = 390
 COL_RET = ANCHO - MARGEN_DER - 5
 
 # ---------------- UI ----------------
+
 nombre_empresa_excel = ""
+
 st.title("📄 Generador Certificados de Retención")
+
 if nombre_empresa_excel:
     st.write("### " + nombre_empresa_excel)
-
+	
 col1, col2, col3 = st.columns(3)
 
 with col1:
