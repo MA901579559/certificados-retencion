@@ -21,8 +21,14 @@ nombre_empresa_excel = ""
 
 st.title("📄 Generador Certificados de Retención")
 
-if nombre_empresa_excel:
-    st.write("### " + nombre_empresa_excel)
+st.title("📄 Generador Certificados de Retención")
+
+archivo = st.file_uploader("Sube el auxiliar", type=["xlsx"])
+
+if archivo:
+    df_head = pd.read_excel(archivo, engine="openpyxl", nrows=2, header=None)
+    nombre_empresa_excel = str(df_head.iloc[1, 3]).strip()
+    st.markdown(f"### {nombre_empresa_excel}")
 
 ANIO = st.number_input("Año gravable", value=2026)
 NOMBRE_EMPRESA = st.text_input("Nombre empresa", value="MASIZO SAS")
