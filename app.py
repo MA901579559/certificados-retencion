@@ -150,25 +150,20 @@ if archivo:
 
 # -------- FILTRO POR TERCERO --------
 
-df_base = df.copy()
-
 nombre_input = st.text_input("Buscar tercero")
 
-if nombre_input:
-    df_base = df_base[
-        df_base["Tercero"].str.contains(nombre_input, case=False, na=False)
-    ]
+# ✅ lista completa SIEMPRE
+terceros = sorted(df["Tercero"].dropna().unique())
 
-terceros = sorted(df_base["Tercero"].dropna().unique())
-
+# ✅ selección
 tercero_sel = st.selectbox("Seleccionar tercero", ["Todos"] + terceros)
 
+# ✅ filtro final
+if nombre_input:
+    df = df[df["Tercero"].str.contains(nombre_input, case=False, na=False)]
+
 if tercero_sel != "Todos":
-    df = df_base[df_base["Tercero"] == tercero_sel]
-elif nombre_input:
-    df = df_base
-else:
-    df = df
+    df = df[df["Tercero"] == tercero_sel]
 
 
     # ---------------- CONTINÚA TU LÓGICA NORMAL ----------------
