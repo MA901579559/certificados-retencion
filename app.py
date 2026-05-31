@@ -6,35 +6,20 @@ st.set_page_config(
     page_icon="📄"
 )
 
-st.markdown("""
-<div style="background-color:#2E86C1;padding:12px;border-radius:8px;">
+st.markdown(
+    '<div style="background-color:#2E86C1;padding:12px;border-radius:8px;">'
+    '<div style="display:flex;justify-content:space-between;align-items:center;">'
+    '<div style="color:white;font-weight:bold;font-size:18px;">MASIZO SAS</div>'
+    '<div style="color:white;">Wilfredo Diaz | Soporte | Preferencia</div>'
+    '</div>'
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;">'
+    '<div style="color:white;font-weight:bold;">📄 Certificados</div>'
+    '<div style="font-size:18px;color:white;">🔄 &nbsp;&nbsp; 📥 &nbsp;&nbsp; ⚙️</div>'
+    '</div>'
+    '</div>',
+    unsafe_allow_html=True
+)
 
-    <div style="display:flex;justify-content:space-between;align-items:center;">
-        
-        <div style="color:white;font-weight:bold;font-size:18px;">
-            MASIZO SAS
-        </div>
-
-        <div style="color:white;">
-            Wilfredo Diaz | Soporte | Preferencia
-        </div>
-
-    </div>
-
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;">
-        
-        <div style="color:white;font-weight:bold;">
-            📄 Certificados
-        </div>
-
-        <div style="font-size:18px;color:white;">
-            🔄 &nbsp;&nbsp; 📥 &nbsp;&nbsp; ⚙️
-        </div>
-
-    </div>
-
-</div>
-""", unsafe_allow_html=True)
 
 import zipfile
 import re
