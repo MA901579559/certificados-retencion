@@ -147,25 +147,33 @@ if archivo:
 
     df = df[(df["Periodo"] >= inicio) & (df["Periodo"] <= fin)]
 
-# -------- FILTRO POR TERCERO --------
+    # -------- FILTRO POR TERCERO --------
 
-# 🔍 Campo de búsqueda
-nombre_input = st.text_input("Buscar tercero")
+nombre_input = st.text_input("Buscar tercero", key="buscar_tercero")
 
-# ✅ lista ORIGINAL (sin filtrar)
-terceros = sorted(df["Tercero"].dropna().unique())
+# ✅ siempre partir del df completo actual
+df_filtrado = df.copy()
 
-# ✅ filtro en lista solo visual
+# ✅ filtro por texto (en el dataframe, NO en lista)
 if nombre_input:
-    terceros = [t for t in terceros if nombre_input.lower() in t.lower()]
+    df_filtrado = df_filtrado[
+        df_filtrado["Tercero"].str.contains(nombre_input, case=False, na=False)
+    ]
 
-# ✅ selector
-tercero_sel = st.selectbox("Seleccionar tercero", ["Todos"] + terceros)
+# ✅ lista basada en ese resultado
+terceros = sorted(df_filtrado["Tercero"].dropna().unique())
 
-# ✅ aplicar filtro REAL
+tercero_sel = st.selectbox(
+    "Seleccionar tercero",
+    ["Todos"] + terceros,
+    key="select_tercero"
+)
+
+# ✅ filtro final aplicado al df original
 if tercero_sel != "Todos":
     df = df[df["Tercero"] == tercero_sel]
-
+elif nombre_input:
+    df = df_filtrado
 
 
     # ---------------- CONTINÚA TU LÓGICA NORMAL ----------------
