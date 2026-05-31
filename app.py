@@ -96,7 +96,7 @@ if archivo:
 
     st.write("### " + nombre_empresa_excel)
 
-    ✅ df = pd.read_excel(archivo, engine="openpyxl", skiprows=10)
+    df = pd.read_excel(archivo, engine="openpyxl", skiprows=10)
 
     df.columns = [
 
