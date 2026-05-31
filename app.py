@@ -22,18 +22,6 @@ st.title("📄 Generador Certificados de Retención")
 if nombre_empresa_excel:
     st.write("### " + nombre_empresa_excel)
 
-ANIO = st.number_input("Año gravable", value=2026)
-NOMBRE_EMPRESA = st.text_input("Nombre empresa", value="MASIZO SAS")
-
-CIUDAD_CONSIGNACION = st.text_input("Ciudad de consignación", value="Bogotá").strip()
-
-if not CIUDAD_CONSIGNACION:
-    st.warning("⚠️ Debes ingresar la ciudad de consignación")
-    st.stop()
-
-fecha_emision = st.date_input("Fecha de emisión", value=date.today())
-fecha_texto = fecha_emision.strftime("%d de %b de %Y")
-
 col1, col2, col3 = st.columns(3)
 
 with col1:
