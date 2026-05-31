@@ -22,13 +22,14 @@ st.subheader("Acciones")
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    limpiar = st.button("🔄 Limpiar filtros")
+    limpiar = st.button("🔄 Limpiar filtros", key="btn_limpiar")
 
 with col2:
-    descargar = st.button("📥 Descargar Excel")
+    descargar = st.button("📥 Descargar Excel", key="btn_excel")
 
 with col3:
-    opciones = st.button("⚙️ Opciones")
+    opciones = st.button("⚙️ Opciones", key="btn_opciones")
+
 
 import zipfile
 import re
