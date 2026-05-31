@@ -145,7 +145,7 @@ if archivo:
     inicio = c1.selectbox("Desde periodo", periodos, 0)
     fin = c2.selectbox("Hasta periodo", periodos, len(periodos)-1)
 
-    df = df[(df["Periodo"] &gt;= inicio) &amp; (df["Periodo"] &lt;= fin)]
+    df = df[(df["Periodo"] >= inicio) & (df["Periodo"] <= fin)]
 
 
 # -------- FILTRO POR TERCERO --------
