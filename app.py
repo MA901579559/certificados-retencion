@@ -150,31 +150,46 @@ if archivo:
 
 # -------- FILTRO POR TERCERO --------
 
-nombre_input = st.text_input("Buscar tercero", key="buscar")
+if archivo:
 
-terceros = sorted(df["Tercero"].dropna().unique())
+    nombre_input = st.text_input("Buscar tercero")
 
-tercero_sel = st.selectbox(
-    "Seleccionar tercero",
-    ["Todos"] + terceros,
-    key="select"
-)
+    terceros = sorted(df["Tercero"].dropna().unique())
 
-# ✅ nuevo dataframe filtrado
-df_filtrado = df.copy()
+    tercero_sel = st.selectbox("Seleccionar tercero", ["Todos"] + terceros)
 
-if nombre_input:
-    df_filtrado = df_filtrado[
-        df_filtrado["Tercero"].str.contains(nombre_input, case=False, na=False)
-    ]
+    if nombre_input:
+        df = df[
+            df["Tercero"].str.contains(nombre_input, case=False, na=False)
+        ]
 
-if tercero_sel != "Todos":
-    df_filtrado = df_filtrado[
-        df_filtrado["Tercero"] == tercero_sel
-    ]
+    if tercero_sel != "Todos":
+        df = df[df["Tercero"] == tercero_sel]
 
-# ✅ este es el df que sigue
-df = df_filtrado
+# ✅ 🔥 AQUÍ YA SALES DEL FILTRO (IMPORTANTE)
+
+# ---------------- CONTINÚA TU LÓGICA NORMAL ----------------
+
+if archivo:
+
+    df["TipoRet"] = df["Cuenta"].apply(
+        lambda c: "Retefuente" if str(c).startswith("2365")
+        else "ReteIVA" if str(c).startswith("2367")
+        else "ReteICA" if str(c).startswith("2368")
+        else "Otros"
+    )
+
+    df = df[df["TipoRet"].isin(tipos_sel)]
+
+    df["Retencion"] = (df["Credito"] - df["Debito"]).abs()
+    df = df[df["Retencion"] > 0]
+
+    agrupado = df.groupby(["Nit","Tercero","TipoRet","Concepto"]).agg({
+        "Retencion":"sum"
+    }).reset_index()
+
+    st.dataframe(agrupado)
+
 
     # ---------------- CONTINÚA TU LÓGICA NORMAL ----------------
     df["TipoRet"] = df["Cuenta"].apply(
