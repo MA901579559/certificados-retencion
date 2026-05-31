@@ -159,10 +159,7 @@ if archivo:
     tercero_sel = st.selectbox("Seleccionar tercero", ["Todos"] + terceros)
 
 df = df[
-    df["Tercero"].str.contains(nombre_input, case=False, na=False)
-    |
     df["Nit"].str.contains(nombre_input, na=False)
-]
 
 
     if tercero_sel != "Todos":
