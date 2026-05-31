@@ -17,7 +17,10 @@ COL_TARIFA = 390
 COL_RET = ANCHO - MARGEN_DER - 5
 
 # ---------------- UI ----------------
+nombre_empresa_excel = ""
 st.title("📄 Generador Certificados de Retención")
+if nombre_empresa_excel:
+    st.write("### " + nombre_empresa_excel)
 
 ANIO = st.number_input("Año gravable", value=2026)
 NOMBRE_EMPRESA = st.text_input("Nombre empresa", value="MASIZO SAS")
