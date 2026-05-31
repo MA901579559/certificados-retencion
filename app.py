@@ -19,17 +19,21 @@ COL_RET = ANCHO - MARGEN_DER - 5
 # ---------------- UI ----------------
 st.title("📄 Generador Certificados de Retención")
 
-ANIO = st.number_input("Año gravable", value=2026)
+# Fila 1 (compacta)
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    ANIO = st.number_input("Año gravable", value=2026)
+
+with col2:
+    CIUDAD_CONSIGNACION = st.text_input("Ciudad consignación", value="Bogotá").strip()
+
+with col3:
+    fecha_emision = st.date_input("Fecha emisión", value=date.today())
+
+# Fila 2 (ancho completo)
 NOMBRE_EMPRESA = st.text_input("Nombre empresa", value="MASIZO SAS")
-
-CIUDAD_CONSIGNACION = st.text_input("Ciudad de consignación", value="Bogotá").strip()
-
-if not CIUDAD_CONSIGNACION:
-    st.warning("⚠️ Debes ingresar la ciudad de consignación")
-    st.stop()
-
-fecha_emision = st.date_input("Fecha de emisión", value=date.today())
-fecha_texto = fecha_emision.strftime("%d de %b de %Y")
+``
 
 archivo = st.file_uploader("Sube el auxiliar", type=["xlsx"])
 
