@@ -19,7 +19,16 @@ COL_RET = ANCHO - MARGEN_DER - 5
 # ---------------- UI ----------------
 nombre_empresa_excel = ""
 
-st.title("📄 Generador Certificados de Retención")
+st.markdown(
+    """
+    <div style="background-color:#2E86C1;padding:12px;border-radius:8px;">
+        <h2 style="color:white;text-align:center;margin:0;">
+            📄 Generador Certificados de Retención
+        </h2>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 empresa_placeholder = st.empty()
 
 # if nombre_empresa_excel:
