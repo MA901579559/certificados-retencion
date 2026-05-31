@@ -19,6 +19,9 @@ COL_RET = ANCHO - MARGEN_DER - 5
 # ---------------- UI ----------------
 st.title("📄 Generador Certificados de Retención")
 
+if nombre_empresa_excel:
+    st.write("### " + nombre_empresa_excel)
+
 # Fila 1 (compacta)
 col1, col2, col3 = st.columns(3)
 
@@ -88,6 +91,9 @@ def titulo(tipo):
 # ---------------- PROCESO ----------------
 
 if archivo:
+
+df_head = pd.read_excel(archivo, engine="openpyxl", nrows=2)
+nombre_empresa_excel = str(df_head.iloc[1, 3]).strip()
 
     df = pd.read_excel(archivo, engine="openpyxl", skiprows=10)
 
