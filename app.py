@@ -17,19 +17,21 @@ COL_TARIFA = 390
 COL_RET = ANCHO - MARGEN_DER - 5
 
 # ---------------- UI ----------------
+nombre_empresa_excel = ""
 st.title("📄 Generador Certificados de Retención")
+if nombre_empresa_excel:
+    st.write("### " + nombre_empresa_excel)
 
-ANIO = st.number_input("Año gravable", value=2026)
-NOMBRE_EMPRESA = st.text_input("Nombre empresa", value="MASIZO SAS")
+col1, col2, col3 = st.columns(3)
 
-CIUDAD_CONSIGNACION = st.text_input("Ciudad de consignación", value="Bogotá").strip()
+with col1:
+    ANIO = st.number_input("Año gravable", value=2026)
 
-if not CIUDAD_CONSIGNACION:
-    st.warning("⚠️ Debes ingresar la ciudad de consignación")
-    st.stop()
+with col2:
+    CIUDAD_CONSIGNACION = st.text_input("Ciudad de consignación", value="Bogotá").strip()
 
-fecha_emision = st.date_input("Fecha de emisión", value=date.today())
-fecha_texto = fecha_emision.strftime("%d de %b de %Y")
+with col3:
+    fecha_emision = st.date_input("Fecha de emisión", value=date.today())
 
 archivo = st.file_uploader("Sube el auxiliar", type=["xlsx"])
 
@@ -86,7 +88,8 @@ def titulo(tipo):
 
 if archivo:
 
-    df = pd.read_excel(archivo, engine="openpyxl", skiprows=10)
+    df_head = pd.read_excel(archivo, engine="openpyxl", nrows=2)
+    nombre_empresa_excel = str(df_head.iloc[1, 3]).strip()
 
     df.columns = [
         "NitEmpresa","Cuenta","Nombre","Fecha",
