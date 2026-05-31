@@ -25,7 +25,7 @@ if nombre_empresa_excel:
     st.write("### " + nombre_empresa_excel)
 
 ANIO = st.number_input("Año gravable", value=2026)
-NOMBRE_EMPRESA = st.text_input("Nombre empresa", value="MASIZO SAS")
+# NOMBRE_EMPRESA = st.text_input("Nombre empresa", value="MASIZO SAS"
 
 CIUDAD_CONSIGNACION = st.text_input("Ciudad de consignación", value="Bogotá").strip()
 
@@ -90,10 +90,8 @@ def titulo(tipo):
 # ---------------- PROCESO ----------------
 
 if archivo:
-
     df_head = pd.read_excel(archivo, engine="openpyxl", nrows=2)
     nombre_empresa_excel = str(df_head.iloc[1, 3]).strip()
-
     st.write("### " + nombre_empresa_excel)
 
     df = pd.read_excel(archivo, engine="openpyxl", skiprows=10)
