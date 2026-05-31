@@ -47,14 +47,13 @@ with col2:
 with col3:
     fecha_emision = st.date_input("Fecha de emisión", value=date.today())
 
-with col4:
-    archivo = st.file_uploader("Sube el auxiliar", type=["xlsx"])
-
 if not CIUDAD_CONSIGNACION:
     st.warning("⚠️ Debes ingresar la ciudad de consignación")
     st.stop()
 
 fecha_texto = fecha_emision.strftime("%d de %b de %Y")
+
+archivo = st.file_uploader("Sube el auxiliar", type=["xlsx"])
 
 # ---------------- FUNCIONES ----------------
 
