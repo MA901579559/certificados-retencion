@@ -21,10 +21,10 @@ nombre_empresa_excel = ""
 
 st.markdown(
     """
-    <div style="background-color:#2E86C1;padding:12px;border-radius:8px;">
-        <h2 style="color:white;text-align:center;margin:0;">
+    <div style="background-color:#2E86C1;padding:8px;border-radius:8px;">
+        <h3 style="color:white;text-align:center;margin:0;">
             📄 Generador Certificados de Retención
-        </h2>
+        </h3>
     </div>
     """,
     unsafe_allow_html=True
