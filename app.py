@@ -59,6 +59,11 @@ if not CIUDAD_CONSIGNACION:
 fecha_emision = st.date_input("Fecha de emisión", value=date.today())
 fecha_texto = fecha_emision.strftime("%d de %b de %Y")
 
+archivo = st.file_uploader("Sube el auxiliar", type=["xlsx"])
+
+if archivo:
+    st.success("✅ Archivo cargado correctamente")
+
 # ---------------- FUNCIONES ----------------
 
 def periodo_a_mes(periodo):
@@ -108,11 +113,6 @@ def titulo(tipo):
         return "CERTIFICADO DE RETENCIONES DE IVA"
     return "CERTIFICADO"
 
-archivo = st.file_uploader("Sube el auxiliar", type=["xlsx"])
-
-if archivo:
-    st.success("✅ Archivo cargado correctamente")
-
 # ---------------- PROCESO ----------------
 
 if archivo:
@@ -147,22 +147,23 @@ if archivo:
 
     df = df[(df["Periodo"] >= inicio) & (df["Periodo"] <= fin)]
 
-# -------- FILTRO POR TERCERO --------
-df_base = df.copy()
+    # ---------------- FILTRO TERCERO (CORREGIDO) ----------------
+    df_base = df.copy()
 
-nombre_input = st.text_input("Buscar tercero")
+    nombre_input = st.text_input("Buscar tercero")
 
-if nombre_input:
-    df_base = df_base[df_base["Tercero"].str.contains(nombre_input, case=False, na=False)]
+    if nombre_input:
+        df_base = df_base[df_base["Tercero"].str.contains(nombre_input, case=False, na=False)]
 
-terceros = sorted(df_base["Tercero"].dropna().unique())
-tercero_sel = st.selectbox("Seleccionar tercero", ["Todos"] + terceros)
+    terceros = sorted(df_base["Tercero"].dropna().unique())
+    tercero_sel = st.selectbox("Seleccionar tercero", ["Todos"] + terceros)
 
-if tercero_sel != "Todos":
-    df = df_base[df_base["Tercero"] == tercero_sel]
-else:
-    df = df_base
+    if tercero_sel != "Todos":
+        df = df_base[df_base["Tercero"] == tercero_sel]
+    else:
+        df = df_base
 
+    # ---------------- CONTINÚA TU LÓGICA NORMAL ----------------
     df["TipoRet"] = df["Cuenta"].apply(
         lambda c: "Retefuente" if str(c).startswith("2365")
         else "ReteIVA" if str(c).startswith("2367")
