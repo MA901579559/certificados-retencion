@@ -17,6 +17,19 @@ st.markdown(
     unsafe_allow_html=True
 )
 
+st.subheader("Acciones")
+
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    limpiar = st.button("🔄 Limpiar filtros")
+
+with col2:
+    descargar = st.button("📥 Descargar Excel")
+
+with col3:
+    opciones = st.button("⚙️ Opciones")
+
 import zipfile
 import re
 from datetime import date
