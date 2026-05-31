@@ -165,8 +165,10 @@ tercero_sel = st.selectbox("Seleccionar tercero", ["Todos"] + terceros)
 
 if tercero_sel != "Todos":
     df = df_base[df_base["Tercero"] == tercero_sel]
-else:
+elif nombre_input:
     df = df_base
+else:
+    df = df
 
 
     # ---------------- CONTINÚA TU LÓGICA NORMAL ----------------
