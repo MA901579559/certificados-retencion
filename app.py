@@ -93,8 +93,13 @@ def titulo(tipo):
 # ---------------- PROCESO ----------------
 
 if archivo:
+
     df_head = pd.read_excel(archivo, engine="openpyxl", nrows=2)
     nombre_empresa_excel = str(df_head.iloc[1, 3]).strip()
+
+    # ✅ MOSTRAR AQUÍ
+    st.write("### " + nombre_empresa_excel)
+
     df = pd.read_excel(archivo, engine="openpyxl", skiprows=10)
 
     df.columns = [
