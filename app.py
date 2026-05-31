@@ -59,6 +59,12 @@ if not CIUDAD_CONSIGNACION:
 fecha_emision = st.date_input("Fecha de emisión", value=date.today())
 fecha_texto = fecha_emision.strftime("%d de %b de %Y")
 
+archivo = st.file_uploader("Sube el auxiliar", type=["xlsx"])
+
+if archivo:
+    st.success("✅ Archivo cargado correctamente")
+``
+
 # ---------------- FUNCIONES ----------------
 
 def periodo_a_mes(periodo):
