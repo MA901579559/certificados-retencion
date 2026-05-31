@@ -25,7 +25,7 @@ empresa_placeholder = st.empty()
 # if nombre_empresa_excel:
 #   st.write("### " + nombre_empresa_excel)
 
-NOMBRE_EMPRESA = st.text_input("Nombre empresa", value="MASIZO SAS")
+NOMBRE_EMPRESA = nombre_empresa_excel
 
 col1, col2, col3 = st.columns(3)
 
