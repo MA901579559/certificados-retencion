@@ -12,31 +12,10 @@ st.markdown(
     '<div style="color:white;font-weight:bold;font-size:18px;">MASIZO SAS</div>'
     '<div style="color:white;">Wilfredo Diaz | Soporte | Preferencia</div>'
     '</div>'
-    '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;">'
-    '<div style="color:white;font-weight:bold;">📄 Certificados</div>'
-    '<div style="font-size:18px;color:white;">🔄 &nbsp;&nbsp; 📥 &nbsp;&nbsp; ⚙️</div>'
-    '</div>'
+    '<div style="margin-top:8px;color:white;font-weight:bold;">📄 Certificados de Retención</div>'
     '</div>',
     unsafe_allow_html=True
 )
-st.markdown("""
-<style>
-div.stButton > button {
-    background-color: #d5d8dc;
-    color: black;
-    border-radius: 10px;
-    height: 45px;
-    font-weight: bold;
-    border: none;
-}
-
-div.stButton > button:hover {
-    background-color: #aeb6bf;
-    color: black;
-}
-</style>
-""", unsafe_allow_html=True)
-
 
 import zipfile
 import re
