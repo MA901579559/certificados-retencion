@@ -34,6 +34,17 @@ if not CIUDAD_CONSIGNACION:
 fecha_emision = st.date_input("Fecha de emisión", value=date.today())
 fecha_texto = fecha_emision.strftime("%d de %b de %Y")
 
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    ANIO = st.number_input("Año gravable", value=2026)
+
+with col2:
+    CIUDAD_CONSIGNACION = st.text_input("Ciudad de consignación", value="Bogotá").strip()
+
+with col3:
+    fecha_emision = st.date_input("Fecha de emisión", value=date.today())
+
 archivo = st.file_uploader("Sube el auxiliar", type=["xlsx"])
 
 # ---------------- FUNCIONES ----------------
