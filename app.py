@@ -150,19 +150,18 @@ if archivo:
 
 # -------- FILTRO POR TERCERO --------
 
-if 'df' in locals():
+nombre_input = st.text_input("Buscar tercero")
 
-    nombre_input = st.text_input("Buscar tercero")
+terceros = sorted(df["Tercero"].dropna().unique())
 
-    terceros = sorted(df["Tercero"].dropna().unique())
+tercero_sel = st.selectbox("Seleccionar tercero", ["Todos"] + terceros)
 
-    tercero_sel = st.selectbox("Seleccionar tercero", ["Todos"] + terceros)
+# ✅ aplicar filtro correctamente
+if tercero_sel != "Todos":
+    df = df[df["Tercero"] == tercero_sel]
+elif nombre_input:
+    df = df[df["Tercero"].str.contains(nombre_input, case=False, na=False)]
 
-    if nombre_input:
-        df = df[df["Tercero"].str.contains(nombre_input, case=False, na=False)]
-
-    if tercero_sel != "Todos":
-        df = df[df["Tercero"] == tercero_sel]
 
     # ---------------- CONTINÚA TU LÓGICA NORMAL ----------------
     df["TipoRet"] = df["Cuenta"].apply(
