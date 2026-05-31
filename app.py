@@ -63,7 +63,6 @@ archivo = st.file_uploader("Sube el auxiliar", type=["xlsx"])
 
 if archivo:
     st.success("✅ Archivo cargado correctamente")
-``
 
 # ---------------- FUNCIONES ----------------
 
@@ -147,23 +146,6 @@ if archivo:
     fin = c2.selectbox("Hasta periodo", periodos, len(periodos)-1)
 
     df = df[(df["Periodo"] >= inicio) & (df["Periodo"] <= fin)]
-
-# -------- FILTRO POR TERCERO --------
-df_base = df.copy()
-
-nombre_input = st.text_input("Buscar tercero")
-
-if nombre_input:
-    df_base = df_base[df_base["Tercero"].str.contains(nombre_input, case=False, na=False)]
-
-terceros = sorted(df_base["Tercero"].dropna().unique())
-tercero_sel = st.selectbox("Seleccionar tercero", ["Todos"] + terceros)
-
-if tercero_sel != "Todos":
-    df = df_base[df_base["Tercero"] == tercero_sel]
-else:
-    df = df_base
-
 
     df["TipoRet"] = df["Cuenta"].apply(
         lambda c: "Retefuente" if str(c).startswith("2365")
