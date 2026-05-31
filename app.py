@@ -158,10 +158,15 @@ if archivo:
 
     tercero_sel = st.selectbox("Seleccionar tercero", ["Todos"] + terceros)
 
+    # ✅ primero filtra por texto
+    if nombre_input:
+        df = df[
+            df["Tercero"].str.contains(nombre_input, case=False, na=False)
+        ]
+
+    # ✅ luego filtra por selección
     if tercero_sel != "Todos":
         df = df[df["Tercero"] == tercero_sel]
-    elif nombre_input:
-        df = df[df["Tercero"].str.contains(nombre_input, case=False, na=False)]
 
     # ---------------- CONTINÚA TU LÓGICA NORMAL ----------------
     df["TipoRet"] = df["Cuenta"].apply(
