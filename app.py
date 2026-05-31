@@ -34,7 +34,7 @@ st.markdown("""
     </div>
 
 </div>
-""", unsafe_allow_html=True))
+""", unsafe_allow_html=True)
 
 import zipfile
 import re
