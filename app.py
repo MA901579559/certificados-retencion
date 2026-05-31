@@ -31,7 +31,6 @@ CIUDAD_CONSIGNACION = st.text_input("Ciudad de consignación", value="Bogotá").
 if not CIUDAD_CONSIGNACION:
     st.warning("⚠️ Debes ingresar la ciudad de consignación")
     st.stop()
-
 fecha_emision = st.date_input("Fecha de emisión", value=date.today())
 fecha_texto = fecha_emision.strftime("%d de %b de %Y")
 
