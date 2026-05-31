@@ -20,9 +20,10 @@ COL_RET = ANCHO - MARGEN_DER - 5
 nombre_empresa_excel = ""
 
 st.title("📄 Generador Certificados de Retención")
+empresa_placeholder = st.empty()
 
-if nombre_empresa_excel:
-    st.write("### " + nombre_empresa_excel)
+# if nombre_empresa_excel:
+#   st.write("### " + nombre_empresa_excel)
 
 NOMBRE_EMPRESA = st.text_input("Nombre empresa", value="MASIZO SAS")
 
