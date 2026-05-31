@@ -59,8 +59,6 @@ if not CIUDAD_CONSIGNACION:
 fecha_emision = st.date_input("Fecha de emisión", value=date.today())
 fecha_texto = fecha_emision.strftime("%d de %b de %Y")
 
-
-
 # ---------------- FUNCIONES ----------------
 
 def periodo_a_mes(periodo):
@@ -109,12 +107,6 @@ def titulo(tipo):
     elif tipo == "ReteIVA":
         return "CERTIFICADO DE RETENCIONES DE IVA"
     return "CERTIFICADO"
-
-
-archivo = st.file_uploader("Sube el auxiliar", type=["xlsx"])
-
-if archivo:
-    st.success("✅ Archivo cargado correctamente")
 
 # ---------------- PROCESO ----------------
 
