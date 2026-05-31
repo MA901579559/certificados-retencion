@@ -26,9 +26,6 @@ if archivo:
     nombre_empresa_excel = str(df_head.iloc[1, 3]).strip()
     st.markdown(f"### {nombre_empresa_excel}")
 
-if nombre_empresa_excel:
-    
-
 ANIO = st.number_input("Año gravable", value=2026)
 # NOMBRE_EMPRESA = st.text_input("Nombre empresa", value="MASIZO SAS")
 
