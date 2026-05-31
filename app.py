@@ -147,21 +147,26 @@ if archivo:
 
     df = df[(df["Periodo"] >= inicio) & (df["Periodo"] <= fin)]
 
-    # ---------------- FILTRO TERCERO (CORREGIDO) ----------------
-    df_base = df.copy()
+# -------- FILTRO POR TERCERO --------
 
-    nombre_input = st.text_input("Buscar tercero")
+# 🔍 Campo de búsqueda
+nombre_input = st.text_input("Buscar tercero")
 
-    if nombre_input:
-        df_base = df_base[df_base["Tercero"].str.contains(nombre_input, case=False, na=False)]
+# ✅ lista ORIGINAL (sin filtrar)
+terceros = sorted(df["Tercero"].dropna().unique())
 
-    terceros = sorted(df_base["Tercero"].dropna().unique())
-    tercero_sel = st.selectbox("Seleccionar tercero", ["Todos"] + terceros)
+# ✅ filtro en lista solo visual
+if nombre_input:
+    terceros = [t for t in terceros if nombre_input.lower() in t.lower()]
 
-    if tercero_sel != "Todos":
-        df = df_base[df_base["Tercero"] == tercero_sel]
-    else:
-        df = df_base
+# ✅ selector
+tercero_sel = st.selectbox("Seleccionar tercero", ["Todos"] + terceros)
+
+# ✅ aplicar filtro REAL
+if tercero_sel != "Todos":
+    df = df[df["Tercero"] == tercero_sel]
+
+
 
     # ---------------- CONTINÚA TU LÓGICA NORMAL ----------------
     df["TipoRet"] = df["Cuenta"].apply(
