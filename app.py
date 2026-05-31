@@ -19,6 +19,23 @@ st.markdown(
     '</div>',
     unsafe_allow_html=True
 )
+st.markdown("""
+<style>
+div.stButton > button {
+    background-color: #d5d8dc;
+    color: black;
+    border-radius: 10px;
+    height: 45px;
+    font-weight: bold;
+    border: none;
+}
+
+div.stButton > button:hover {
+    background-color: #aeb6bf;
+    color: black;
+}
+</style>
+""", unsafe_allow_html=True)
 
 
 import zipfile
