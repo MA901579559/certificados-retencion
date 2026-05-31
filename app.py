@@ -33,7 +33,6 @@ with col3:
 
 # Fila 2 (ancho completo)
 NOMBRE_EMPRESA = st.text_input("Nombre empresa", value="MASIZO SAS")
-``
 
 archivo = st.file_uploader("Sube el auxiliar", type=["xlsx"])
 
