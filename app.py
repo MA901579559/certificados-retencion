@@ -18,7 +18,7 @@ st.markdown(
     '<div style="background-color:#2E86C1;padding:12px;border-radius:8px;">'
     '<div style="display:flex;justify-content:space-between;">'
     '<div style="color:white;font-weight:bold;font-size:18px;">MASIZO SAS</div>'
-    '<div style="color:white;">Wilfredo Diaz | Soporte</div>'
+    '<div style="color:white;">Wilfredo Diaz</div>'
     '</div>'
     '<div style="margin-top:8px;color:white;font-weight:bold;">📄 Certificados de Retención</div>'
     '</div>',
