@@ -93,7 +93,7 @@ if archivo:
 
     df = pd.read_excel(archivo, engine="openpyxl", skiprows=10)
 
-    nombre_empresa_excel = str(df.iloc[2, 4]).strip()
+    nombre_empresa_excel = str(df.iloc[1, 3]).strip()
     st.write("### " + nombre_empresa_excel)
 
     df.columns = [
