@@ -249,16 +249,21 @@ if archivo:
 
     def porcentaje_esperado(row):
         tarifa = extraer_tarifa(row["Concepto"])
-        if "ICA" in row["Concepto"]:
+        if tarifa == 0:
+            return 0
+        if "ICA" in str(row["Concepto"]).upper():
             return round(tarifa/10, 4)
         return tarifa
 
     agrupado["% Esperado"] = agrupado.apply(porcentaje_esperado, axis=1)
     agrupado["Error"] = abs(agrupado["% Calculado"] - agrupado["% Esperado"])
 
-    agrupado["Estado"] = agrupado["Error"].apply(
-        lambda x: "✅ OK" if x < 0.1 else "⚠️ ERROR"
-    )
+def estado_fila(row):
+        if row["Base"] == 0 and row["% Esperado"] == 0:
+            return "✅ OK"
+        return "✅ OK" if row["Error"] < 0.1 else "⚠️ ERROR"
+
+    agrupado["Estado"] = agrupado.apply(estado_fila, axis=1)
 
     st.dataframe(agrupado)
 
