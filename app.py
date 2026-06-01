@@ -32,7 +32,7 @@ st.markdown(
 
 empresa_placeholder = st.empty()
 
-# La variable sigue existiendo para el PDF, pero ya no se muestra como campo
+# La variable sigue existiendo para el PDF
 NOMBRE_EMPRESA = nombre_empresa_excel
 
 col1, col2, col3 = st.columns(3)
@@ -58,10 +58,10 @@ archivo = st.file_uploader("Sube el auxiliar", type=["xlsx"])
 
 def periodo_a_mes(periodo):
     meses = {
-        "01": "Enero","02": "Febrero","03": "Marzo",
-        "04": "Abril","05": "Mayo","06": "Junio",
-        "07": "Julio","08": "Agosto","09": "Septiembre",
-        "10": "Octubre","11": "Noviembre","12": "Diciembre"
+        "01": "Enero", "02": "Febrero", "03": "Marzo",
+        "04": "Abril", "05": "Mayo", "06": "Junio",
+        "07": "Julio", "08": "Agosto", "09": "Septiembre",
+        "10": "Octubre", "11": "Noviembre", "12": "Diciembre"
     }
     texto = str(periodo)
     match = re.search(r'(20\d{2})[-]?(\d{2})', texto)
@@ -82,13 +82,13 @@ def escribir_parrafo(texto, y, c):
         if stringWidth(prueba, "Helvetica", 8) < ancho_max:
             linea = prueba
         else:
-            x = 300 - stringWidth(linea, "Helvetica", 8)/2
+            x = 300 - stringWidth(linea, "Helvetica", 8) / 2
             c.drawString(x, y, linea)
             y -= 10
             linea = palabra
 
     if linea:
-        x = 300 - stringWidth(linea, "Helvetica", 8)/2
+        x = 300 - stringWidth(linea, "Helvetica", 8) / 2
         c.drawString(x, y, linea)
         y -= 10
 
@@ -113,16 +113,15 @@ if archivo:
     empresa_placeholder.markdown("### " + nombre_empresa_excel)
     NOMBRE_EMPRESA = nombre_empresa_excel
 
-    # Datos del auxiliar
-    # ✅ CORRECCIÓN: no usar skiprows=10 porque deja por fuera enero/febrero
+    # ✅ CORRECCIÓN: leer desde la fila correcta
     df = pd.read_excel(archivo, engine="openpyxl", skiprows=4)
 
     df.columns = [
-        "NitEmpresa","Cuenta","Nombre","Fecha",
-        "Fecha2","Nit","Tercero","Descripcion",
-        "Debito","Credito","Actividad",
-        "Periodo","Proyecto","Tasa",
-        "Base","Concepto"
+        "NitEmpresa", "Cuenta", "Nombre", "Fecha",
+        "Fecha2", "Nit", "Tercero", "Descripcion",
+        "Debito", "Credito", "Actividad",
+        "Periodo", "Proyecto", "Tasa",
+        "Base", "Concepto"
     ]
 
     # LIMPIEZA
@@ -146,7 +145,7 @@ if archivo:
 
     c1, c2 = st.columns(2)
     inicio = c1.selectbox("Desde periodo", periodos, 0)
-    fin = c2.selectbox("Hasta periodo", periodos, len(periodos)-1)
+    fin = c2.selectbox("Hasta periodo", periodos, len(periodos) - 1)
 
     df = df[(df["Periodo"] >= inicio) & (df["Periodo"] <= fin)]
 
@@ -195,9 +194,7 @@ if archivo:
 
     df["Nombre"] = df["Nombre"].fillna("").astype(str).str.strip()
 
-    # ✅ CORRECCIÓN CLAVE:
-    # El concepto se toma del NOMBRE DE LA CUENTA, no de la columna Impuesto/Concepto
-    # para que no se parta el mismo tercero en una línea aparte de "SIN CONCEPTO"
+    # ✅ CORRECCIÓN: usar el nombre de la cuenta como concepto
     df["Concepto"] = df["Nombre"].fillna("SIN CONCEPTO").astype(str).str.strip()
 
     # ---------------- TARIFA ----------------
@@ -213,20 +210,19 @@ if archivo:
     df["Tarifa"] = df["Nombre"].apply(extraer_tarifa)
 
     df["TarifaReal"] = df.apply(
-        lambda x: x["Tarifa"]/1000 if "ICA" in str(x["Nombre"]).upper()
-        else x["Tarifa"]/100 if x["Tarifa"] > 0 else 0,
+        lambda x: x["Tarifa"] / 1000 if "ICA" in str(x["Nombre"]).upper()
+        else x["Tarifa"] / 100 if x["Tarifa"] > 0 else 0,
         axis=1
     )
 
     # ---------------- CALCULO ----------------
-    # asegurar que Crédito y Débito sean numéricos
     df["Credito"] = pd.to_numeric(df["Credito"], errors="coerce").fillna(0)
     df["Debito"] = pd.to_numeric(df["Debito"], errors="coerce").fillna(0)
 
-    # movimiento neto por fila
+    # ✅ Regla correcta: crédito - débito
     df["RetencionMov"] = df["Credito"] - df["Debito"]
 
-    # netear por mes
+    # Netear por mes
     mensual = df.groupby(
         ["Nit", "Tercero", "TipoRet", "Concepto", "Periodo", "TarifaReal"],
         as_index=False,
@@ -235,13 +231,13 @@ if archivo:
         "RetencionMov": "sum"
     })
 
-    # calcular base con el neto mensual
+    # Base calculada
     mensual["BaseCalc"] = mensual.apply(
         lambda x: x["RetencionMov"] / x["TarifaReal"] if x["TarifaReal"] > 0 else 0,
         axis=1
     )
 
-    # acumular el rango de meses seleccionado
+    # Acumular rango de meses
     agrupado = mensual.groupby(
         ["Nit", "Tercero", "TipoRet", "Concepto"],
         as_index=False,
@@ -256,14 +252,13 @@ if archivo:
         "RetencionMov": "Retencion"
     }, inplace=True)
 
-    # limpiar residuos decimales mínimos
+    # Limpiar residuos decimales mínimos
     agrupado["Base"] = agrupado["Base"].apply(lambda x: 0 if abs(x) < 0.0001 else x)
     agrupado["Retencion"] = agrupado["Retencion"].apply(lambda x: 0 if abs(x) < 0.0001 else x)
 
-    # eliminar filas completamente en cero con SIN CONCEPTO
+    # ✅ Eliminar filas completamente neteadas en cero
     agrupado = agrupado[
         ~(
-            (agrupado["Concepto"] == "SIN CONCEPTO") &
             (agrupado["Base"] == 0) &
             (agrupado["Retencion"] == 0)
         )
@@ -271,31 +266,24 @@ if archivo:
 
     # ---------------- VALIDACION ----------------
     agrupado["% Calculado"] = agrupado.apply(
-        lambda x: round(x["Retencion"]/x["Base"]*100, 4) if x["Base"] != 0 else 0,
+        lambda x: round(x["Retencion"] / x["Base"] * 100, 4) if x["Base"] != 0 else 0,
         axis=1
     )
 
     def porcentaje_esperado(row):
-        if str(row["Concepto"]).strip().upper() == "SIN CONCEPTO":
-            return 0
-
         tarifa = extraer_tarifa(row["Concepto"])
         if tarifa == 0:
             return 0
         if "ICA" in str(row["Concepto"]).upper():
-            return round(tarifa/10, 4)
+            return round(tarifa / 10, 4)
         return tarifa
 
     agrupado["% Esperado"] = agrupado.apply(porcentaje_esperado, axis=1)
     agrupado["Error"] = abs(agrupado["% Calculado"] - agrupado["% Esperado"])
 
     def estado_fila(row):
-        if str(row["Concepto"]).strip().upper() == "SIN CONCEPTO":
-            return "✅ OK"
-
         if row["Base"] == 0 and row["% Esperado"] == 0:
             return "✅ OK"
-
         return "✅ OK" if row["Error"] < 0.1 else "⚠️ ERROR"
 
     agrupado["Estado"] = agrupado.apply(estado_fila, axis=1)
@@ -315,7 +303,7 @@ if archivo:
         c.drawCentredString(300, 690, NOMBRE_EMPRESA)
         c.drawCentredString(300, 675, "NIT: 901579559")
 
-        c.line(MARGEN_IZQ, 660, ANCHO-MARGEN_DER, 660)
+        c.line(MARGEN_IZQ, 660, ANCHO - MARGEN_DER, 660)
 
         y = 630
 
@@ -346,7 +334,7 @@ if archivo:
         c.drawString(COL_RET - 60, y, "Retención")
 
         y -= 15
-        c.line(MARGEN_IZQ, y, ANCHO-MARGEN_DER, y)
+        c.line(MARGEN_IZQ, y, ANCHO - MARGEN_DER, y)
         y -= 15
 
         total_base = 0
@@ -362,9 +350,9 @@ if archivo:
             if base == 0:
                 tarifa = "N/A"
             elif "ICA" in str(r["Concepto"]).upper():
-                tarifa = f"{round(ret/base*1000,2)}‰"
+                tarifa = f"{round(ret / base * 1000, 2)}‰"
             else:
-                tarifa = f"{round(ret/base*100,2)} %"
+                tarifa = f"{round(ret / base * 100, 2)} %"
 
             total_base += base
             total_ret += ret
@@ -377,7 +365,7 @@ if archivo:
             y -= 15
 
         y -= 5
-        c.line(MARGEN_IZQ, y, ANCHO-MARGEN_DER, y)
+        c.line(MARGEN_IZQ, y, ANCHO - MARGEN_DER, y)
         y -= 20
 
         c.setFont("Helvetica-Bold", 11)
@@ -395,9 +383,15 @@ if archivo:
 
         y -= 30
 
-        y = escribir_parrafo("Este certificado se expide conforme al artículo 381 del Estatuto Tributario.", y, c)
+        y = escribir_parrafo(
+            "Este certificado se expide conforme al artículo 381 del Estatuto Tributario.",
+            y, c
+        )
         y -= 10
-        y = escribir_parrafo("Este documento no requiere firma autógrafa conforme al Decreto 836 de 1991, Decreto 380 de 1996 y Decreto 1625 de 2016.", y, c)
+        y = escribir_parrafo(
+            "Este documento no requiere firma autógrafa conforme al Decreto 836 de 1991, Decreto 380 de 1996 y Decreto 1625 de 2016.",
+            y, c
+        )
 
         c.save()
         return file_name
@@ -414,12 +408,17 @@ if archivo:
 
         archivos = []
 
-        for (nit, tercero, tipo), grupo in agrupado.groupby(["Nit","Tercero","TipoRet"]):
+        for (nit, tercero, tipo), grupo in agrupado.groupby(["Nit", "Tercero", "TipoRet"]):
             archivos.append(generar_pdf(nit, tercero, grupo, tipo, texto_periodo))
 
         if len(archivos) == 1:
             with open(archivos[0], "rb") as f:
-                st.download_button("📄 Descargar PDF", f, file_name=archivos[0], mime="application/pdf")
+                st.download_button(
+                    "📄 Descargar PDF",
+                    f,
+                    file_name=archivos[0],
+                    mime="application/pdf"
+                )
         else:
             zip_name = "certificados.zip"
 
@@ -428,4 +427,9 @@ if archivo:
                     z.write(a)
 
             with open(zip_name, "rb") as f:
-                st.download_button("📦 Descargar ZIP", f, file_name="certificados.zip", mime="application/zip")
+                st.download_button(
+                    "📦 Descargar ZIP",
+                    f,
+                    file_name="certificados.zip",
+                    mime="application/zip"
+                )
