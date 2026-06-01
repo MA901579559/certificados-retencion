@@ -114,7 +114,7 @@ if archivo:
     NOMBRE_EMPRESA = nombre_empresa_excel
 
     # Datos del auxiliar
-    df = pd.read_excel(archivo, engine="openpyxl", skiprows=10)
+    df = pd.read_excel(archivo, engine="openpyxl", skiprows=4)
 
     df.columns = [
         "NitEmpresa","Cuenta","Nombre","Fecha",
