@@ -207,22 +207,43 @@ if archivo:
     )
 
     # ---------------- CALCULO ----------------
-    df["Retencion"] = (df["Credito"] - df["Debito"]).abs()
-    df = df[df["Retencion"] > 0]
 
-    df["BaseCalc"] = df.apply(
-        lambda x: x["Retencion"]/x["TarifaReal"] if x["TarifaReal"] > 0 else 0,
+    # asegurar que Crédito y Débito sean numéricos
+    df["Credito"] = pd.to_numeric(df["Credito"], errors="coerce").fillna(0)
+    df["Debito"] = pd.to_numeric(df["Debito"], errors="coerce").fillna(0)
+
+    # movimiento neto por fila
+    df["RetencionMov"] = df["Credito"] - df["Debito"]
+
+    # netear por mes
+    mensual = df.groupby(
+        ["Nit", "Tercero", "TipoRet", "Concepto", "Periodo", "TarifaReal"],
+        as_index=False
+    ).agg({
+        "RetencionMov": "sum"
+    })
+
+    # calcular base con el neto mensual
+    mensual["BaseCalc"] = mensual.apply(
+        lambda x: x["RetencionMov"] / x["TarifaReal"] if x["TarifaReal"] > 0 else 0,
         axis=1
     )
 
-    agrupado = df.groupby(["Nit","Tercero","TipoRet","Concepto"]).agg({
-        "BaseCalc":"sum",
-        "Retencion":"sum"
-    }).reset_index()
+    # acumular el rango de meses seleccionado
+    agrupado = mensual.groupby(
+        ["Nit", "Tercero", "TipoRet", "Concepto"],
+        as_index=False
+    ).agg({
+        "BaseCalc": "sum",
+        "RetencionMov": "sum"
+    })
 
-    agrupado.rename(columns={"BaseCalc":"Base"}, inplace=True)
+    agrupado.rename(columns={
+        "BaseCalc": "Base",
+        "RetencionMov": "Retencion"
+    }, inplace=True)
 
-    # ---------------- VALIDACION ----------------
+     # ---------------- VALIDACION ----------------
     agrupado["% Calculado"] = agrupado.apply(
         lambda x: round(x["Retencion"]/x["Base"]*100,4) if x["Base"] != 0 else 0, axis=1)
 
