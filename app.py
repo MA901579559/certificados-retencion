@@ -188,6 +188,9 @@ if archivo:
     df["TipoRet"] = df["Cuenta"].apply(tipo_cuenta)
     df = df[df["TipoRet"].isin(tipos_sel)]
 
+    df["Nombre"] = df["Nombre"].fillna("").astype(str).str.strip()
+    df["Concepto"] = df["Concepto"].fillna("SIN CONCEPTO").astype(str).str.strip()
+
     # ---------------- TARIFA ----------------
     def extraer_tarifa(texto):
         m = re.search(r'(\d+[.,]?\d*)\s*%', str(texto))
@@ -218,7 +221,8 @@ if archivo:
     # netear por mes
     mensual = df.groupby(
         ["Nit", "Tercero", "TipoRet", "Concepto", "Periodo", "TarifaReal"],
-        as_index=False
+        as_index=False,
+        dropna=False
     ).agg({
         "RetencionMov": "sum"
     })
@@ -232,7 +236,8 @@ if archivo:
     # acumular el rango de meses seleccionado
     agrupado = mensual.groupby(
         ["Nit", "Tercero", "TipoRet", "Concepto"],
-        as_index=False
+        as_index=False,
+        dropna=False
     ).agg({
         "BaseCalc": "sum",
         "RetencionMov": "sum"
@@ -245,22 +250,27 @@ if archivo:
 
      # ---------------- VALIDACION ----------------
     agrupado["% Calculado"] = agrupado.apply(
-        lambda x: round(x["Retencion"]/x["Base"]*100,4) if x["Base"] != 0 else 0, axis=1)
+        lambda x: round(x["Retencion"]/x["Base"]*100, 4) if x["Base"] != 0 else 0,
+        axis=1
+    )
 
     def porcentaje_esperado(row):
         tarifa = extraer_tarifa(row["Concepto"])
-        if "ICA" in row["Concepto"]:
+        if tarifa == 0:
+            return 0
+        if "ICA" in str(row["Concepto"]).upper():
             return round(tarifa/10, 4)
         return tarifa
 
     agrupado["% Esperado"] = agrupado.apply(porcentaje_esperado, axis=1)
     agrupado["Error"] = abs(agrupado["% Calculado"] - agrupado["% Esperado"])
 
-    agrupado["Estado"] = agrupado["Error"].apply(
-        lambda x: "✅ OK" if x < 0.1 else "⚠️ ERROR"
-    )
+    def estado_fila(row):
+        if row["Base"] == 0 and row["% Esperado"] == 0:
+            return "✅ OK"
+        return "✅ OK" if row["Error"] < 0.1 else "⚠️ ERROR"
 
-    st.dataframe(agrupado)
+    agrupado["Estado"] = agrupado.apply(estado_fila, axis=1)
 
     # ---------------- PDF ----------------
     def generar_pdf(nit, nombre, datos, tipo, texto_periodo):
