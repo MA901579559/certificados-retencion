@@ -193,7 +193,8 @@ if archivo:
     df = df[df["TipoRet"].isin(tipos_sel)]
 
     df["Nombre"] = df["Nombre"].fillna("").astype(str).str.strip()
-    df["Concepto"] = df["Concepto"].fillna("SIN CONCEPTO").astype(str).str.strip()
+    # OJO: no reemplazamos aún por SIN CONCEPTO; lo normalizamos más abajo
+    df["Concepto"] = df["Concepto"].fillna("").astype(str).str.strip()
 
     # ---------------- TARIFA ----------------
     def extraer_tarifa(texto):
@@ -212,6 +213,27 @@ if archivo:
         else x["Tarifa"]/100 if x["Tarifa"] > 0 else 0,
         axis=1
     )
+
+    # ✅ NORMALIZAR CONCEPTO:
+    # Si viene vacío pero la fila tiene tarifa y tipo de retención,
+    # se le asigna el concepto correcto en vez de "SIN CONCEPTO".
+    def normalizar_concepto(row):
+        concepto = str(row["Concepto"]).strip()
+        if concepto:
+            return concepto
+
+        tarifa = row["Tarifa"]
+        if tarifa > 0:
+            tarifa_txt = str(int(tarifa)) if float(tarifa).is_integer() else str(tarifa).replace(".", ",")
+            if row["TipoRet"] == "ReteIVA":
+                return f"ReteIVA {tarifa_txt}%"
+            elif row["TipoRet"] == "Retefuente":
+                return f"Retefuente {tarifa_txt}%"
+            elif row["TipoRet"] == "ReteICA":
+                return f"ReteICA {tarifa_txt}"
+        return "SIN CONCEPTO"
+
+    df["Concepto"] = df.apply(normalizar_concepto, axis=1)
 
     # ---------------- CALCULO ----------------
     # asegurar que Crédito y Débito sean numéricos
@@ -254,6 +276,15 @@ if archivo:
     # limpiar residuos decimales mínimos
     agrupado["Base"] = agrupado["Base"].apply(lambda x: 0 if abs(x) < 0.0001 else x)
     agrupado["Retencion"] = agrupado["Retencion"].apply(lambda x: 0 if abs(x) < 0.0001 else x)
+
+    # eliminar filas completamente en cero con SIN CONCEPTO
+    agrupado = agrupado[
+        ~(
+            (agrupado["Concepto"] == "SIN CONCEPTO") &
+            (agrupado["Base"] == 0) &
+            (agrupado["Retencion"] == 0)
+        )
+    ]
 
     # ---------------- VALIDACION ----------------
     agrupado["% Calculado"] = agrupado.apply(
