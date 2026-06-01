@@ -29,11 +29,10 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
 empresa_placeholder = st.empty()
 
-# if nombre_empresa_excel:
-#   st.write("### " + nombre_empresa_excel)
-
+# La variable sigue existiendo para el PDF, pero ya no se muestra como campo
 NOMBRE_EMPRESA = nombre_empresa_excel
 
 col1, col2, col3 = st.columns(3)
@@ -108,11 +107,14 @@ def titulo(tipo):
 
 if archivo:
 
-    df = pd.read_excel(archivo, engine="openpyxl", skiprows=10)
-
+    # Nombre empresa desde D2
     df_head = pd.read_excel(archivo, engine="openpyxl", nrows=2, header=None)
     nombre_empresa_excel = str(df_head.iloc[1, 3]).strip()
     empresa_placeholder.markdown("### " + nombre_empresa_excel)
+    NOMBRE_EMPRESA = nombre_empresa_excel
+
+    # Datos del auxiliar
+    df = pd.read_excel(archivo, engine="openpyxl", skiprows=10)
 
     df.columns = [
         "NitEmpresa","Cuenta","Nombre","Fecha",
@@ -135,8 +137,8 @@ if archivo:
 
     tipos_sel = st.multiselect(
         "Tipos de certificados",
-        ["Retefuente","ReteIVA","ReteICA"],
-        default=["Retefuente","ReteICA"]
+        ["Retefuente", "ReteIVA", "ReteICA"],
+        default=["Retefuente", "ReteICA"]
     )
 
     periodos = sorted(df["Periodo"].dropna().unique())
@@ -147,19 +149,23 @@ if archivo:
 
     df = df[(df["Periodo"] >= inicio) & (df["Periodo"] <= fin)]
 
-    # ✅ FILTRO CORREGIDO
+    # -------- FILTROS POR NIT Y TERCERO --------
     df_base = df.copy()
 
     nit_input = st.text_input("Filtrar NIT")
     if nit_input:
         df_base = df_base[df_base["Nit"].str.contains(nit_input, na=False)]
 
-    nombre_input = st.text_input("Buscar tercero")
-    if nombre_input:
-        df_base = df_base[df_base["Tercero"].str.contains(nombre_input, case=False, na=False)]
-
+    # El listado de terceros sale de la base filtrada por periodo/NIT,
+    # pero no depende del texto para que no desaparezcan terceros.
     terceros = sorted(df_base["Tercero"].dropna().unique())
     tercero_sel = st.selectbox("Seleccionar tercero", ["Todos"] + terceros)
+
+    nombre_input = st.text_input("Buscar tercero")
+    if nombre_input:
+        df_base = df_base[
+            df_base["Tercero"].str.contains(nombre_input, case=False, na=False)
+        ]
 
     if tercero_sel != "Todos":
         df = df_base[df_base["Tercero"] == tercero_sel]
@@ -167,7 +173,7 @@ if archivo:
         df = df_base
 
     if not incluir_autoret:
-        df = df[~df["Nombre"].str.upper().str.contains("AUTORRETENCION", na=False)]
+        df = df[~df["Nombre"].astype(str).str.upper().str.contains("AUTORRETENCION", na=False)]
 
     # ---------------- PERIODO ----------------
     mes_inicio = periodo_a_mes(inicio)
@@ -210,7 +216,6 @@ if archivo:
     )
 
     # ---------------- CALCULO ----------------
-
     # asegurar que Crédito y Débito sean numéricos
     df["Credito"] = pd.to_numeric(df["Credito"], errors="coerce").fillna(0)
     df["Debito"] = pd.to_numeric(df["Debito"], errors="coerce").fillna(0)
@@ -248,7 +253,7 @@ if archivo:
         "RetencionMov": "Retencion"
     }, inplace=True)
 
-     # ---------------- VALIDACION ----------------
+    # ---------------- VALIDACION ----------------
     agrupado["% Calculado"] = agrupado.apply(
         lambda x: round(x["Retencion"]/x["Base"]*100, 4) if x["Base"] != 0 else 0,
         axis=1
@@ -271,6 +276,8 @@ if archivo:
         return "✅ OK" if row["Error"] < 0.1 else "⚠️ ERROR"
 
     agrupado["Estado"] = agrupado.apply(estado_fila, axis=1)
+
+    st.dataframe(agrupado)
 
     # ---------------- PDF ----------------
     def generar_pdf(nit, nombre, datos, tipo, texto_periodo):
@@ -331,10 +338,10 @@ if archivo:
 
             if base == 0:
                 tarifa = "N/A"
-            elif "ICA" in r["Concepto"]:
-                tarifa = f"{round(ret/base*1000,2)}‰"
+            elif "ICA" in str(r["Concepto"]).upper():
+                tarifa = f"{round(ret/base*1000, 2)}‰"
             else:
-                tarifa = f"{round(ret/base*100,2)} %"
+                tarifa = f"{round(ret/base*100, 2)} %"
 
             total_base += base
             total_ret += ret
@@ -365,9 +372,15 @@ if archivo:
 
         y -= 30
 
-        y = escribir_parrafo("Este certificado se expide conforme al artículo 381 del Estatuto Tributario.", y, c)
+        y = escribir_parrafo(
+            "Este certificado se expide conforme al artículo 381 del Estatuto Tributario.",
+            y, c
+        )
         y -= 10
-        y = escribir_parrafo("Este documento no requiere firma autógrafa conforme al Decreto 836 de 1991, Decreto 380 de 1996 y Decreto 1625 de 2016.", y, c)
+        y = escribir_parrafo(
+            "Este documento no requiere firma autógrafa conforme al Decreto 836 de 1991, Decreto 380 de 1996 y Decreto 1625 de 2016.",
+            y, c
+        )
 
         c.save()
         return file_name
@@ -384,12 +397,17 @@ if archivo:
 
         archivos = []
 
-        for (nit, tercero, tipo), grupo in agrupado.groupby(["Nit","Tercero","TipoRet"]):
+        for (nit, tercero, tipo), grupo in agrupado.groupby(["Nit", "Tercero", "TipoRet"]):
             archivos.append(generar_pdf(nit, tercero, grupo, tipo, texto_periodo))
 
         if len(archivos) == 1:
             with open(archivos[0], "rb") as f:
-                st.download_button("📄 Descargar PDF", f, file_name=archivos[0], mime="application/pdf")
+                st.download_button(
+                    "📄 Descargar PDF",
+                    f,
+                    file_name=archivos[0],
+                    mime="application/pdf"
+                )
         else:
             zip_name = "certificados.zip"
 
@@ -398,4 +416,9 @@ if archivo:
                     z.write(a)
 
             with open(zip_name, "rb") as f:
-                st.download_button("📦 Descargar ZIP", f, file_name="certificados.zip", mime="application/zip")
+                st.download_button(
+                    "📦 Descargar ZIP",
+                    f,
+                    file_name="certificados.zip",
+                    mime="application/zip"
+                )
