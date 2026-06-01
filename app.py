@@ -82,13 +82,13 @@ def escribir_parrafo(texto, y, c):
         if stringWidth(prueba, "Helvetica", 8) < ancho_max:
             linea = prueba
         else:
-            x = 300 - stringWidth(linea, "Helvetica", 8) / 2
+            x = 300 - stringWidth(linea, "Helvetica", 8)/2
             c.drawString(x, y, linea)
             y -= 10
             linea = palabra
 
     if linea:
-        x = 300 - stringWidth(linea, "Helvetica", 8) / 2
+        x = 300 - stringWidth(linea, "Helvetica", 8)/2
         c.drawString(x, y, linea)
         y -= 10
 
@@ -145,7 +145,7 @@ if archivo:
 
     c1, c2 = st.columns(2)
     inicio = c1.selectbox("Desde periodo", periodos, 0)
-    fin = c2.selectbox("Hasta periodo", periodos, len(periodos) - 1)
+    fin = c2.selectbox("Hasta periodo", periodos, len(periodos)-1)
 
     df = df[(df["Periodo"] >= inicio) & (df["Periodo"] <= fin)]
 
@@ -208,12 +208,13 @@ if archivo:
     df["Tarifa"] = df["Nombre"].apply(extraer_tarifa)
 
     df["TarifaReal"] = df.apply(
-        lambda x: x["Tarifa"] / 1000 if "ICA" in str(x["Nombre"]).upper()
-        else x["Tarifa"] / 100 if x["Tarifa"] > 0 else 0,
+        lambda x: x["Tarifa"]/1000 if "ICA" in str(x["Nombre"]).upper()
+        else x["Tarifa"]/100 if x["Tarifa"] > 0 else 0,
         axis=1
     )
 
     # ---------------- CALCULO ----------------
+
     # asegurar que Crédito y Débito sean numéricos
     df["Credito"] = pd.to_numeric(df["Credito"], errors="coerce").fillna(0)
     df["Debito"] = pd.to_numeric(df["Debito"], errors="coerce").fillna(0)
@@ -251,9 +252,13 @@ if archivo:
         "RetencionMov": "Retencion"
     }, inplace=True)
 
+    # ✅ limpiar residuos decimales mínimos
+    agrupado["Base"] = agrupado["Base"].apply(lambda x: 0 if abs(x) < 0.0001 else x)
+    agrupado["Retencion"] = agrupado["Retencion"].apply(lambda x: 0 if abs(x) < 0.0001 else x)
+
     # ---------------- VALIDACION ----------------
     agrupado["% Calculado"] = agrupado.apply(
-        lambda x: round(x["Retencion"] / x["Base"] * 100, 4) if x["Base"] != 0 else 0,
+        lambda x: round(x["Retencion"]/x["Base"]*100, 4) if x["Base"] != 0 else 0,
         axis=1
     )
 
@@ -262,7 +267,7 @@ if archivo:
         if tarifa == 0:
             return 0
         if "ICA" in str(row["Concepto"]).upper():
-            return round(tarifa / 10, 4)
+            return round(tarifa/10, 4)
         return tarifa
 
     agrupado["% Esperado"] = agrupado.apply(porcentaje_esperado, axis=1)
@@ -290,7 +295,7 @@ if archivo:
         c.drawCentredString(300, 690, NOMBRE_EMPRESA)
         c.drawCentredString(300, 675, "NIT: 901579559")
 
-        c.line(MARGEN_IZQ, 660, ANCHO - MARGEN_DER, 660)
+        c.line(MARGEN_IZQ, 660, ANCHO-MARGEN_DER, 660)
 
         y = 630
 
@@ -321,7 +326,7 @@ if archivo:
         c.drawString(COL_RET - 60, y, "Retención")
 
         y -= 15
-        c.line(MARGEN_IZQ, y, ANCHO - MARGEN_DER, y)
+        c.line(MARGEN_IZQ, y, ANCHO-MARGEN_DER, y)
         y -= 15
 
         total_base = 0
@@ -337,9 +342,9 @@ if archivo:
             if base == 0:
                 tarifa = "N/A"
             elif "ICA" in str(r["Concepto"]).upper():
-                tarifa = f"{round(ret / base * 1000, 2)}‰"
+                tarifa = f"{round(ret/base*1000,2)}‰"
             else:
-                tarifa = f"{round(ret / base * 100, 2)} %"
+                tarifa = f"{round(ret/base*100,2)} %"
 
             total_base += base
             total_ret += ret
@@ -352,7 +357,7 @@ if archivo:
             y -= 15
 
         y -= 5
-        c.line(MARGEN_IZQ, y, ANCHO - MARGEN_DER, y)
+        c.line(MARGEN_IZQ, y, ANCHO-MARGEN_DER, y)
         y -= 20
 
         c.setFont("Helvetica-Bold", 11)
@@ -370,15 +375,9 @@ if archivo:
 
         y -= 30
 
-        y = escribir_parrafo(
-            "Este certificado se expide conforme al artículo 381 del Estatuto Tributario.",
-            y, c
-        )
+        y = escribir_parrafo("Este certificado se expide conforme al artículo 381 del Estatuto Tributario.", y, c)
         y -= 10
-        y = escribir_parrafo(
-            "Este documento no requiere firma autógrafa conforme al Decreto 836 de 1991, Decreto 380 de 1996 y Decreto 1625 de 2016.",
-            y, c
-        )
+        y = escribir_parrafo("Este documento no requiere firma autógrafa conforme al Decreto 836 de 1991, Decreto 380 de 1996 y Decreto 1625 de 2016.", y, c)
 
         c.save()
         return file_name
@@ -395,17 +394,12 @@ if archivo:
 
         archivos = []
 
-        for (nit, tercero, tipo), grupo in agrupado.groupby(["Nit", "Tercero", "TipoRet"]):
+        for (nit, tercero, tipo), grupo in agrupado.groupby(["Nit","Tercero","TipoRet"]):
             archivos.append(generar_pdf(nit, tercero, grupo, tipo, texto_periodo))
 
         if len(archivos) == 1:
             with open(archivos[0], "rb") as f:
-                st.download_button(
-                    "📄 Descargar PDF",
-                    f,
-                    file_name=archivos[0],
-                    mime="application/pdf"
-                )
+                st.download_button("📄 Descargar PDF", f, file_name=archivos[0], mime="application/pdf")
         else:
             zip_name = "certificados.zip"
 
@@ -414,9 +408,4 @@ if archivo:
                     z.write(a)
 
             with open(zip_name, "rb") as f:
-                st.download_button(
-                    "📦 Descargar ZIP",
-                    f,
-                    file_name="certificados.zip",
-                    mime="application/zip"
-                )
+                st.download_button("📦 Descargar ZIP", f, file_name="certificados.zip", mime="application/zip")
