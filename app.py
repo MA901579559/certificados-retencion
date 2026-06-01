@@ -201,16 +201,12 @@ if archivo:
     df["Tarifa"] = df["Nombre"].apply(extraer_tarifa)
 
     df["TarifaReal"] = df.apply(
-        lambda x: x["Tarifa"] / 1000 if "ICA" in str(x["Nombre"]).upper()
-        else x["Tarifa"] / 100 if x["Tarifa"] > 0 else 0,
+        lambda x: x["Tarifa"]/1000 if "ICA" in str(x["Nombre"]).upper()
+        else x["Tarifa"]/100 if x["Tarifa"] > 0 else 0,
         axis=1
     )
 
     # ---------------- CALCULO ----------------
-    df["BaseCalc"] = df.apply(
-        lambda x: x["Retencion"] / x["TarifaReal"] if x["TarifaReal"] > 0 else 0,
-        axis=1
-    )
 
     # asegurar que Crédito y Débito sean numéricos
     df["Credito"] = pd.to_numeric(df["Credito"], errors="coerce").fillna(0)
