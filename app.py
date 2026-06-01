@@ -114,6 +114,7 @@ if archivo:
     NOMBRE_EMPRESA = nombre_empresa_excel
 
     # Datos del auxiliar
+    # ✅ CORRECCIÓN: no usar skiprows=10 porque deja por fuera enero/febrero
     df = pd.read_excel(archivo, engine="openpyxl", skiprows=4)
 
     df.columns = [
@@ -193,8 +194,11 @@ if archivo:
     df = df[df["TipoRet"].isin(tipos_sel)]
 
     df["Nombre"] = df["Nombre"].fillna("").astype(str).str.strip()
-    # OJO: no reemplazamos aún por SIN CONCEPTO; lo normalizamos más abajo
-    df["Concepto"] = df["Concepto"].fillna("").astype(str).str.strip()
+
+    # ✅ CORRECCIÓN CLAVE:
+    # El concepto se toma del NOMBRE DE LA CUENTA, no de la columna Impuesto/Concepto
+    # para que no se parta el mismo tercero en una línea aparte de "SIN CONCEPTO"
+    df["Concepto"] = df["Nombre"].fillna("SIN CONCEPTO").astype(str).str.strip()
 
     # ---------------- TARIFA ----------------
     def extraer_tarifa(texto):
@@ -213,27 +217,6 @@ if archivo:
         else x["Tarifa"]/100 if x["Tarifa"] > 0 else 0,
         axis=1
     )
-
-    # ✅ NORMALIZAR CONCEPTO:
-    # Si viene vacío pero la fila tiene tarifa y tipo de retención,
-    # se le asigna el concepto correcto en vez de "SIN CONCEPTO".
-    def normalizar_concepto(row):
-        concepto = str(row["Concepto"]).strip()
-        if concepto:
-            return concepto
-
-        tarifa = row["Tarifa"]
-        if tarifa > 0:
-            tarifa_txt = str(int(tarifa)) if float(tarifa).is_integer() else str(tarifa).replace(".", ",")
-            if row["TipoRet"] == "ReteIVA":
-                return f"ReteIVA {tarifa_txt}%"
-            elif row["TipoRet"] == "Retefuente":
-                return f"Retefuente {tarifa_txt}%"
-            elif row["TipoRet"] == "ReteICA":
-                return f"ReteICA {tarifa_txt}"
-        return "SIN CONCEPTO"
-
-    df["Concepto"] = df.apply(normalizar_concepto, axis=1)
 
     # ---------------- CALCULO ----------------
     # asegurar que Crédito y Débito sean numéricos
