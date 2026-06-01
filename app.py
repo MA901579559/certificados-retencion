@@ -214,7 +214,6 @@ if archivo:
     )
 
     # ---------------- CALCULO ----------------
-
     # asegurar que Crédito y Débito sean numéricos
     df["Credito"] = pd.to_numeric(df["Credito"], errors="coerce").fillna(0)
     df["Debito"] = pd.to_numeric(df["Debito"], errors="coerce").fillna(0)
@@ -252,7 +251,7 @@ if archivo:
         "RetencionMov": "Retencion"
     }, inplace=True)
 
-    # ✅ limpiar residuos decimales mínimos
+    # limpiar residuos decimales mínimos
     agrupado["Base"] = agrupado["Base"].apply(lambda x: 0 if abs(x) < 0.0001 else x)
     agrupado["Retencion"] = agrupado["Retencion"].apply(lambda x: 0 if abs(x) < 0.0001 else x)
 
@@ -263,6 +262,9 @@ if archivo:
     )
 
     def porcentaje_esperado(row):
+        if str(row["Concepto"]).strip().upper() == "SIN CONCEPTO":
+            return 0
+
         tarifa = extraer_tarifa(row["Concepto"])
         if tarifa == 0:
             return 0
@@ -274,8 +276,12 @@ if archivo:
     agrupado["Error"] = abs(agrupado["% Calculado"] - agrupado["% Esperado"])
 
     def estado_fila(row):
+        if str(row["Concepto"]).strip().upper() == "SIN CONCEPTO":
+            return "✅ OK"
+
         if row["Base"] == 0 and row["% Esperado"] == 0:
             return "✅ OK"
+
         return "✅ OK" if row["Error"] < 0.1 else "⚠️ ERROR"
 
     agrupado["Estado"] = agrupado.apply(estado_fila, axis=1)
