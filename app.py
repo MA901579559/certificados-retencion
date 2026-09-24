@@ -260,6 +260,14 @@ if archivo:
         "RetencionMov": "Retencion"
     }, inplace=True)
 
+    st.write("FERRE J DESPUÉS DEL AGRUPADO")
+
+    st.dataframe(
+        agrupado[
+            agrupado["Nit"] == "901332060"
+        ]
+    )
+
     # Limpiar residuos decimales mínimos
     agrupado["Base"] = agrupado["Base"].apply(lambda x: 0 if abs(x) < 0.0001 else x)
     agrupado["Retencion"] = agrupado["Retencion"].apply(lambda x: 0 if abs(x) < 0.0001 else x)
