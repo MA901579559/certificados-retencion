@@ -73,7 +73,7 @@ def periodo_a_mes(periodo):
     return texto
 
 def escribir_parrafo(texto, y, c):
-    ancho_max = ANCHO - (MARGEN_IZQ + MARGEN_DER)
+    ancho_max = ANCHO_PAGINA - (MARGEN_IZQ + MARGEN_DER)
     palabras = texto.split()
     linea = ""
 
