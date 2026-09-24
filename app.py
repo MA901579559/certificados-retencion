@@ -143,16 +143,6 @@ if archivo:
 
     periodos = sorted(df["Periodo"].dropna().unique())
 
-    st.write("FERRE J DESPUÉS DEL FILTRO DE PERIODO")
-
-    st.dataframe(
-        df[
-            df["Nit"].astype(str).str.contains("901332060", na=False)
-        ][
-            ["Nit","Periodo","Cuenta","Nombre","Debito","Credito"]
-        ]
-    )
-
     c1, c2 = st.columns(2)
     inicio = c1.selectbox("Desde periodo", periodos, 0)
     fin = c2.selectbox("Hasta periodo", periodos, len(periodos) - 1)
@@ -202,22 +192,6 @@ if archivo:
     df["TipoRet"] = df["Cuenta"].apply(tipo_cuenta)
     df = df[df["TipoRet"].isin(tipos_sel)]
 
-    st.write("FERRE J ANTES DEL FILTRO DE TIPO")
-
-    st.dataframe(
-        df[df["Nit"] == "901332060"][
-            ["Cuenta", "TipoRet", "Periodo"]
-        ]
-    )
-
-    st.write("FERRE J DESPUES DEL FILTRO DE TIPO")
-
-    st.dataframe(
-        df[df["Nit"] == "901332060"][
-            ["Nit","Periodo","Cuenta","TipoRet","Debito","Credito"]
-        ]
-    )
-
     df["Nombre"] = df["Nombre"].fillna("").astype(str).str.strip()
 
     # ✅ CORRECCIÓN: usar el nombre de la cuenta como concepto
@@ -257,26 +231,10 @@ if archivo:
         "RetencionMov": "sum"
     })
 
-    st.write("FERRE J MENSUAL")
-
-    st.dataframe(
-        mensual[
-            mensual["Nit"] == "901332060"
-        ]
-    )
-
     # Base calculada
     mensual["BaseCalc"] = mensual.apply(
         lambda x: x["RetencionMov"] / x["TarifaReal"] if x["TarifaReal"] > 0 else 0,
         axis=1
-    )
-
-    st.write("FERRE J DESPUES DE BASECALC")
-
-    st.dataframe(
-        mensual[
-            mensual["Nit"] == "901332060"
-        ]
     )
 
     # Acumular rango de meses
@@ -293,7 +251,7 @@ if archivo:
         "BaseCalc": "Base",
         "RetencionMov": "Retencion"
     }, inplace=True)
-    
+
     # Limpiar residuos decimales mínimos
     agrupado["Base"] = agrupado["Base"].apply(lambda x: 0 if abs(x) < 0.0001 else x)
     agrupado["Retencion"] = agrupado["Retencion"].apply(lambda x: 0 if abs(x) < 0.0001 else x)
