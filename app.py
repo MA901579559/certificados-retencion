@@ -405,7 +405,7 @@ if archivo:
         c.drawString(COL_RET - 60, y, "Retención")
 
         y -= 15
-        c.line(MARGEN_IZQ, y, ANCHO - MARGEN_DER, y)
+        c.line(MARGEN_IZQ, y, ANCHO_PAGINA - MARGEN_DER, y)
         y -= 15
 
         total_base = 0
@@ -428,10 +428,70 @@ if archivo:
             total_base += base
             total_ret += ret
 
-            c.drawString(MARGEN_IZQ, y, str(r["Concepto"])[:35])
-            c.drawRightString(COL_BASE, y, f"${base:,.0f}")
-            c.drawRightString(COL_TARIFA, y, tarifa)
-            c.drawRightString(COL_RET, y, f"${ret:,.0f}")
+            concepto = str(r["Concepto"]).strip()
+
+            # Espacio disponible entre el margen izquierdo
+            # y la columna de la base
+            ancho_concepto = COL_BASE - MARGEN_IZQ - 15
+
+            palabras = concepto.split()
+            lineas_concepto = []
+            linea_actual = ""
+
+            for palabra in palabras:
+                prueba = (
+                    linea_actual + " " + palabra
+                    if linea_actual
+                    else palabra
+                )
+
+                if stringWidth(
+                    prueba,
+                    "Helvetica",
+                    10
+                ) <= ancho_concepto:
+                    linea_actual = prueba
+                else:
+                    if linea_actual:
+                        lineas_concepto.append(linea_actual)
+                    linea_actual = palabra
+
+            if linea_actual:
+                lineas_concepto.append(linea_actual)
+
+            # Primera línea del concepto y valores
+            c.drawString(
+                MARGEN_IZQ,
+                y,
+                lineas_concepto[0]
+            )
+
+            c.drawRightString(
+                COL_BASE,
+                y,
+                f"${base:,.0f}"
+            )
+
+            c.drawRightString(
+                COL_TARIFA,
+                y,
+                tarifa
+            )
+
+            c.drawRightString(
+                COL_RET,
+                y,
+                f"${ret:,.0f}"
+            )
+
+            # Solo los conceptos largos utilizan un segundo renglón
+            if len(lineas_concepto) > 1:
+                y -= 12
+                c.drawString(
+                    MARGEN_IZQ,
+                    y,
+                    lineas_concepto[1]
+                )
 
             y -= 15
 
