@@ -237,9 +237,14 @@ if archivo:
         df = df[~df["Nombre"].astype(str).str.upper().str.contains("AUTORRETENCION", na=False)]
 
     # ---------------- PERIODO ----------------
-    mes_inicio = periodo_a_mes(inicio)
-    mes_fin = periodo_a_mes(fin)
-    texto_periodo = f"Periodo: {mes_inicio}" if mes_inicio == mes_fin else f"Periodo: {mes_inicio} a {mes_fin}"
+    mes_inicio = nombres_meses[int(inicio)]
+    mes_fin = nombres_meses[int(fin)]
+
+    texto_periodo = (
+        f"Periodo: {mes_inicio}"
+        if inicio == fin
+        else f"Periodo: {mes_inicio} a {mes_fin}"
+    )
 
     # ---------------- TIPO ----------------
     def tipo_cuenta(c):
