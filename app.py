@@ -146,8 +146,10 @@ if archivo:
     st.write("FERRE J DESPUÉS DEL FILTRO DE PERIODO")
 
     st.dataframe(
-        df[df["Nit"] == "901332060"][
-            ["Periodo","Cuenta","Nombre","Debito","Credito"]
+        df[
+            df["Nit"].astype(str).str.contains("901332060", na=False)
+        ][
+            ["Nit","Periodo","Cuenta","Nombre","Debito","Credito"]
         ]
     )
 
