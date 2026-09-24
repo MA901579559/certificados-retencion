@@ -143,6 +143,16 @@ if archivo:
 
     periodos = sorted(df["Periodo"].dropna().unique())
 
+    st.write("FERRE J DESPUÉS DEL FILTRO DE PERIODO")
+
+st.write("FERRE J DESPUÉS DEL FILTRO DE PERIODO")
+
+st.dataframe(
+    df[df["Nit"] == "901332060"][
+        ["Periodo","Cuenta","Nombre","Debito","Credito"]
+    ]
+)
+
     c1, c2 = st.columns(2)
     inicio = c1.selectbox("Desde periodo", periodos, 0)
     fin = c2.selectbox("Hasta periodo", periodos, len(periodos) - 1)
