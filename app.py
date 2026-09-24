@@ -261,6 +261,14 @@ if archivo:
         axis=1
     )
 
+    st.write("FERRE J DESPUES DE BASECALC")
+
+    st.dataframe(
+        mensual[
+            mensual["Nit"] == "901332060"
+        ]
+    )
+
     # Acumular rango de meses
     agrupado = mensual.groupby(
         ["Nit", "Tercero", "TipoRet", "Concepto"],
