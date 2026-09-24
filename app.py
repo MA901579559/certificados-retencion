@@ -200,6 +200,14 @@ if archivo:
     df["TipoRet"] = df["Cuenta"].apply(tipo_cuenta)
     df = df[df["TipoRet"].isin(tipos_sel)]
 
+    st.write("FERRE J DESPUES DEL FILTRO DE TIPO")
+
+    st.dataframe(
+        df[df["Nit"] == "901332060"][
+            ["Nit","Periodo","Cuenta","TipoRet","Debito","Credito"]
+        ]
+    )
+
     df["Nombre"] = df["Nombre"].fillna("").astype(str).str.strip()
 
     # ✅ CORRECCIÓN: usar el nombre de la cuenta como concepto
