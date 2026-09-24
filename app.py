@@ -141,13 +141,76 @@ if archivo:
         default=["Retefuente", "ReteICA"]
     )
 
-    periodos = sorted(df["Periodo"].dropna().unique())
+    # ---------------- FILTRO DE PERIODOS ----------------
+
+    # Convertir la fecha contable a fecha real
+    df["FechaContable"] = pd.to_datetime(
+        df["Fecha2"],
+        errors="coerce",
+        dayfirst=True
+    )
+
+    # Conservar únicamente registros con fecha válida
+    df = df[df["FechaContable"].notna()]
+
+    # Filtrar por el año gravable seleccionado
+    df = df[df["FechaContable"].dt.year == int(ANIO)]
+
+    # Obtener el número del mes
+    df["MesNumero"] = df["FechaContable"].dt.month
+
+    # Nombres para mostrar en la APP
+    nombres_meses = {
+        1: "Enero",
+        2: "Febrero",
+        3: "Marzo",
+        4: "Abril",
+        5: "Mayo",
+        6: "Junio",
+        7: "Julio",
+        8: "Agosto",
+        9: "Septiembre",
+        10: "Octubre",
+        11: "Noviembre",
+        12: "Diciembre"
+    }
+
+    # Obtener los meses que realmente existen en el auxiliar
+    meses_disponibles = sorted(df["MesNumero"].dropna().unique())
+
+    if not meses_disponibles:
+        st.warning(
+            f"⚠️ No se encontraron movimientos para el año gravable {ANIO}."
+        )
+        st.stop()
 
     c1, c2 = st.columns(2)
-    inicio = c1.selectbox("Desde periodo", periodos, 0)
-    fin = c2.selectbox("Hasta periodo", periodos, len(periodos) - 1)
 
-    df = df[(df["Periodo"] >= inicio) & (df["Periodo"] <= fin)]
+    inicio = c1.selectbox(
+        "Desde periodo",
+        meses_disponibles,
+        index=0,
+        format_func=lambda mes: nombres_meses[int(mes)]
+    )
+
+    fin = c2.selectbox(
+        "Hasta periodo",
+        meses_disponibles,
+        index=len(meses_disponibles) - 1,
+        format_func=lambda mes: nombres_meses[int(mes)]
+    )
+
+    if inicio > fin:
+        st.warning(
+            "⚠️ El período inicial no puede ser posterior al período final."
+        )
+        st.stop()
+
+    # Filtrar cronológicamente por número de mes
+    df = df[
+        (df["MesNumero"] >= inicio) &
+        (df["MesNumero"] <= fin)
+    ]
 
     # -------- FILTROS POR NIT Y TERCERO --------
     df_base = df.copy()
