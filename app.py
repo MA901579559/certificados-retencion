@@ -239,6 +239,14 @@ if archivo:
         "RetencionMov": "sum"
     })
 
+    st.write("FERRE J MENSUAL")
+
+    st.dataframe(
+        mensual[
+            mensual["Nit"] == "901332060"
+        ]
+    )
+
     # Base calculada
     mensual["BaseCalc"] = mensual.apply(
         lambda x: x["RetencionMov"] / x["TarifaReal"] if x["TarifaReal"] > 0 else 0,
@@ -259,15 +267,7 @@ if archivo:
         "BaseCalc": "Base",
         "RetencionMov": "Retencion"
     }, inplace=True)
-
-    st.write("FERRE J DESPUÉS DEL AGRUPADO")
-
-    st.dataframe(
-        agrupado[
-            agrupado["Nit"] == "901332060"
-        ]
-    )
-
+    
     # Limpiar residuos decimales mínimos
     agrupado["Base"] = agrupado["Base"].apply(lambda x: 0 if abs(x) < 0.0001 else x)
     agrupado["Retencion"] = agrupado["Retencion"].apply(lambda x: 0 if abs(x) < 0.0001 else x)
