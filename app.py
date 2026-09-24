@@ -374,7 +374,7 @@ if archivo:
         c.drawCentredString(300, 690, NOMBRE_EMPRESA)
         c.drawCentredString(300, 675, "NIT: 901579559")
 
-        c.line(MARGEN_IZQ, 660, ANCHO - MARGEN_DER, 660)
+        c.line(MARGEN_IZQ, 660, ANCHO_PAGINA - MARGEN_DER, 660)
 
         y = 630
 
