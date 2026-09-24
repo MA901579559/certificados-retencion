@@ -400,9 +400,9 @@ if archivo:
         # TABLA
         c.setFont("Helvetica-Bold", 11)
         c.drawString(MARGEN_IZQ, y, "Concepto")
-        c.drawString(220, y, "Base")
-        c.drawString(330, y, "Tarifa")
-        c.drawString(COL_RET - 60, y, "Retención")
+        c.drawRightString(COL_BASE, y, "Base")
+        c.drawRightString(COL_TARIFA, y, "Tarifa")
+        c.drawRightString(COL_RET, y, "Retención")
 
         y -= 15
         c.line(MARGEN_IZQ, y, ANCHO_PAGINA - MARGEN_DER, y)
