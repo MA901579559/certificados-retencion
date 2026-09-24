@@ -496,7 +496,7 @@ if archivo:
             y -= 15
 
         y -= 5
-        c.line(MARGEN_IZQ, y, ANCHO - MARGEN_DER, y)
+        c.line(MARGEN_IZQ, y, ANCHO_PAGINA - MARGEN_DER, y)
         y -= 20
 
         c.setFont("Helvetica-Bold", 11)
