@@ -432,7 +432,9 @@ if archivo:
 
             # Espacio disponible entre el margen izquierdo
             # y la columna de la base
-            ancho_concepto = COL_BASE - MARGEN_IZQ - 15
+            # Reservar aproximadamente 85 puntos para el valor de la base
+            inicio_base = COL_BASE - 85
+            ancho_concepto = inicio_base - MARGEN_IZQ - 10
 
             palabras = concepto.split()
             lineas_concepto = []
