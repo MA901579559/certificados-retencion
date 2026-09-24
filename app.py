@@ -8,13 +8,16 @@ from reportlab.pdfgen import canvas
 from reportlab.pdfbase.pdfmetrics import stringWidth
 
 # ---------------- CONFIG ----------------
-MARGEN_IZQ = 57   # 2.0 cm
-MARGEN_DER = 42   # 1.5 cm
-ANCHO = 550
+from reportlab.lib.units import cm
 
-COL_BASE = 310
-COL_TARIFA = 390
-COL_RET = ANCHO - MARGEN_DER - 5
+MARGEN_IZQ = 2.5 * cm
+MARGEN_DER = 2.5 * cm
+
+ANCHO_PAGINA, ALTO_PAGINA = letter
+
+COL_BASE = 355
+COL_TARIFA = 440
+COL_RET = ANCHO_PAGINA - MARGEN_DER
 
 # ---------------- UI ----------------
 nombre_empresa_excel = ""
