@@ -372,7 +372,7 @@ if archivo:
 
         c.setFont("Helvetica", 11)
         c.drawCentredString(300, 690, NOMBRE_EMPRESA)
-        c.drawCentredString(300, 675, "NIT: 901.980.561-2")
+        c.drawCentredString(300, 675, "NIT: 901.579.559-9")
 
         c.line(MARGEN_IZQ, 660, ANCHO_PAGINA - MARGEN_DER, 660)
 
